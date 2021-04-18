@@ -1,14 +1,17 @@
 <template>
   <div id="app">
+    <router-view/>
+    <main-tabbar/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import MainTabbar from './components/content/MainTabbar.vue'
 
 export default {
   name: 'App',
   components: {
+    MainTabbar
   }
 }
 </script>

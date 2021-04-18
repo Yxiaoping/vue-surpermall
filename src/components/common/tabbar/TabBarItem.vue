@@ -12,7 +12,7 @@ export default {
     path: String,
     activeColor: {
       type: String,
-      default: 'red'
+      default: 'rgb(215, 56, 36)'
     }
   },
   data () {

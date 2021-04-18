@@ -1,9 +1,9 @@
-@import './normalize.css'
+@import './normalize.css';
 /* :root --> 获取根元素html
 --color-text是定义的变量，这就是css中定义变量的方式，定义之后可在其他css属性里用此变量做值
 font-size: var(--font-size)通过var使用变量
 */
-:root {
+ :root {
     --color-text: #666;
     --color-high-text: #ff5777;
     --color-tint: #ff8198;
