@@ -1,0 +1,48 @@
+@import './normalize.css'
+/* :root --> 获取根元素html
+--color-text是定义的变量，这就是css中定义变量的方式，定义之后可在其他css属性里用此变量做值
+font-size: var(--font-size)通过var使用变量
+*/
+:root {
+    --color-text: #666;
+    --color-high-text: #ff5777;
+    --color-tint: #ff8198;
+    --color-background: #fff;
+    --font-size: 14px;
+    --line-height: 1.5
+}
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding:0;
+    box-sizing: border-box;
+}
+body{
+ font-family: 'Helvetica Neue', Helvetica, 'PingFang SC','Hiragino Sans GB','Mircrosoft YaHei',Arial,  sans-serif;
+ user-select: none;  /* 禁止用户鼠标在页面上选中文字、图片等 */
+ background: var(--color-background);
+ color: var(--color-text);
+ width: 100vw;
+}
+a {
+    color:var(--color-text);
+    text-decoration: none;
+}
+.clear-fix::after {
+    clear: both;
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    visibility: hidden;
+}
+.clear-fix {
+    zoom: 1;
+}
+.left {
+    float: left;
+}
+.right {
+    float: right;
+}
