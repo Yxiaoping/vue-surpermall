@@ -27,6 +27,7 @@ export default {
   methods: {
     itemClick (index) {
       this.currentIndex = index
+      this.$emit('tabClick',index) /* 将子组件数据传递到父组件 */
     }
   }
 }
