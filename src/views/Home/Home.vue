@@ -3,86 +3,26 @@
         <nav-bar class="home-nav">
             <div slot="center">购物街</div>
         </nav-bar>
-        <home-swiper :banners='banners'></home-swiper>
+    <tab-control class="tab-control" 
+          @tabClick='tabClick'
+          :titles='["流行","新款","精选"]'
+          v-show="isTabFixed"
+          ref="tabControl1"></tab-control>
+    <scroll class="content" 
+          ref="scroll" :probe-type='3' 
+          @scroll='contentScroll'
+          :pull-up-load='true'
+          @pullingUp='loadMore'>
+        <home-swiper :banners='banners' @imageLoad='swiperImageLoad'></home-swiper>
         <home-recommend-view :recommends='recommends'></home-recommend-view>
         <feature-view></feature-view>
-        <tab-control class="tab-control" @tabClick='tabClick'
-        :titles='["流行","新款","精选"]'></tab-control>
+    <tab-control 
+            @tabClick='tabClick'
+            :titles='["流行","新款","精选"]'
+            ref="tabControl2"></tab-control>
         <goods-list :goods='showGoods'></goods-list>
-        <ul> <!-- ul>li{列表$}*10 -->
-          <li>列表1</li>
-          <li>列表2</li>
-          <li>列表3</li>
-          <li>列表4</li>
-          <li>列表5</li>
-          <li>列表6</li>
-          <li>列表7</li>
-          <li>列表8</li>
-          <li>列表9</li>
-          <li>列表10</li>
-        </ul>
-        <ul>
-          <li>hello1</li>
-          <li>hello2</li>
-          <li>hello3</li>
-          <li>hello4</li>
-          <li>hello5</li>
-          <li>hello6</li>
-          <li>hello7</li>
-          <li>hello8</li>
-          <li>hello9</li>
-          <li>hello10</li>
-          <li>hello11</li>
-          <li>hello12</li>
-          <li>hello13</li>
-          <li>hello14</li>
-          <li>hello15</li>
-          <li>hello16</li>
-          <li>hello17</li>
-          <li>hello18</li>
-          <li>hello19</li>
-          <li>hello20</li>
-          <li>hello21</li>
-          <li>hello22</li>
-          <li>hello23</li>
-          <li>hello24</li>
-          <li>hello25</li>
-          <li>hello26</li>
-          <li>hello27</li>
-          <li>hello28</li>
-          <li>hello29</li>
-          <li>hello30</li>
-          <li>hello31</li>
-          <li>hello32</li>
-          <li>hello33</li>
-          <li>hello34</li>
-          <li>hello35</li>
-          <li>hello36</li>
-          <li>hello37</li>
-          <li>hello38</li>
-          <li>hello39</li>
-          <li>hello40</li>
-          <li>hello41</li>
-          <li>hello42</li>
-          <li>hello43</li>
-          <li>hello44</li>
-          <li>hello45</li>
-          <li>hello46</li>
-          <li>hello47</li>
-          <li>hello48</li>
-          <li>hello49</li>
-          <li>hello50</li>
-          <li>hello51</li>
-          <li>hello52</li>
-          <li>hello53</li>
-          <li>hello54</li>
-          <li>hello55</li>
-          <li>hello56</li>
-          <li>hello57</li>
-          <li>hello58</li>
-          <li>hello59</li>
-          <li>hello60</li>
-        </ul>
+        </scroll>
+        <back-top @click.native="backTop" v-show="showTop"></back-top>
     </div>
 </template>
 
@@ -95,11 +35,14 @@ import FeatureView from './childComps/FeatureView'
 import NavBar from 'components/common/navbar/NavBar'
 import TabControl from 'components/content/tabControl/TabControl'
 import GoodsList from 'components/content/goods/GoodsList'
+import Scroll from 'components/common/scroll/Scroll'
+import BackTop from 'components/content/backTop/BackTop'
 
 import { 
   getHomeMultidata,
   getHomeGoods
 } from 'network/home.js'
+import {debounce} from 'common/utils.js'
 export default {
   name: 'Home',
   components: {
@@ -108,7 +51,9 @@ export default {
     HomeRecommendView,
     FeatureView,
     TabControl,
-    GoodsList
+    GoodsList,
+    Scroll,
+    BackTop
   },
   data () {
     return {
@@ -120,13 +65,30 @@ export default {
           'new': {page: 0, list:[]},
           'sell': {page: 0, list:[]}
         },
-        currentType: 'pop'
+        currentType: 'pop',
+        showTop: false,
+        tabOffsetTop: 0,
+        isTabFixed: false,
+        saveY: 0
     }
   },
   computed: { // 页面展示处的代码太复杂，可放在计算属性中封装，使上面的代码简化
     showGoods () {
       return this.goods[this.currentType].list
     }
+  },
+  // destroyed () {
+  //   console.log('home destroyed');
+  // },
+  activated () {
+    // 进入时滚动到离开时的位置this.saveY
+    this.$refs.scroll.scrollTo(0, this.saveY, 0)
+    this.$refs.scroll.refresh() // 进入时再刷新，避免出现小问题
+  },
+  deactivated () {
+    // 保存离开时的位置信息到this.saveY
+    this.saveY = this.$refs.scroll.getScrollY()
+    // console.log(this.saveY);
   },
   created () {
     // 将created钩子中的代码简化，处理主要逻辑，具体的方法实现交给methods
@@ -137,8 +99,25 @@ export default {
     this.getHomeGoods('new')
     this.getHomeGoods('sell')
   },
+  mounted () {
+    // 1.监听item中图片加载完成，刷新防抖函数放到了utils.js中，工具库
+    const refresh = debounce(this.$refs.scroll.refresh,50)
+    this.$bus.$on('itemImageLoad',() => {
+      // this.$refs.scroll.refresh()
+      refresh() // 此处是闭包，局部变量不会被销毁
+    })
+  },
   methods: {
     // 事件监听相关方法
+    // debounce(func,delay){ 封装
+    //   let timer = null // 此处也是局部变量，但下面形成了闭包，此局部变量就不会被销毁
+    //   return function(...args){ // 可让func函数传多个参数
+    //     if(timer) clearTimeout(timer) // 如果上一个定时器未执行完直接取消执行，减少对服务器的请求
+    //     timer = setTimeout(()=>{
+    //       func.apply(this,args) // 调用func函数，接收args作为参数
+    //     },delay)
+    //   }
+    // },
     tabClick (index) {
       switch (index) {
         case 0:
@@ -151,6 +130,29 @@ export default {
           this.currentType= 'sell'
           break
       }
+      this.$refs.tabControl1.currentIndex = index
+      this.$refs.tabControl2.currentIndex = index
+    },
+    backTop () {
+      // this.$refs.scroll 可拿到scroll组件中的所有数据
+      // this.$refs.scroll.scroll.scrollTo(0,0,1000)
+      this.$refs.scroll.scrollTo(0,0) /* 封装之后 */
+    },
+    contentScroll(position) {
+      // console.log(position.y)
+        // this.showTop = (-position.y) > 1000  绝对值Math.abs
+        this.showTop = Math.abs(position.y) > 1000
+        // 2.设置吸顶效果
+        this.isTabFixed = (-position.y) > this.tabOffsetTop
+    },
+    loadMore(){
+      this.getHomeGoods(this.currentType)
+      // this.$refs.scroll.finishPullUp() 在这里完成上拉加载更多的话，以后每次再请求数据都还要再写
+    },
+    swiperImageLoad () {
+      // 2.获取tabOffsetTop的offsetTop
+    // console.log(this.$refs.tabControl.$el.offsetTop); 
+    this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop
     },
     // 网络请求相关方法
     getHomeMultidata () {
@@ -166,28 +168,51 @@ export default {
       getHomeGoods(type, page).then(res => {
       this.goods[type].list.push(...res.data.list)
       this.goods[type].page += 1  /* 更新data中的页码 */
+      this.$refs.scroll.finishPullUp() // 调用方法，多次上拉加载更多
     })
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
+/* 加上scoped，表示当前的样式只作用于当前组件 */
 #home{
-  padding: 44px 0 64px;
+  /* padding: 44px 0 64px; */
+  /* vh viewport height 视口高度，100vh就是整个视口高度，50vh是50%的高度 */
+  height: 100vh;
+  position: relative;
 }
 .home-nav {
     background-color: var(--color-tint);
     color: #fff;
-    position: fixed;
+    /* position: fixed;
     right: 0;
     left: 0;
     top: 0;
-    z-index: 9;
+    z-index: 9; */
+    /* position: relative; 下面加了overflow，这里就不用设置了
+    z-index: 9; */
 }
-.tab-control {
+/* .tab-control {
   position: sticky;
   top: 44px;
+  z-index: 9;
+} */
+.content {
+  /* 方法一：计算
+  height: calc(100% - 98px); 
+  overflow:hidden;
+  margin-top:44px*/
+  overflow: hidden;
+  position: absolute;
+  top: 44px;
+  bottom: 49px;
+  left: 0;
+  right: 0;
+}
+.tab-control {
+  position: relative;
   z-index: 9;
 }
 </style>

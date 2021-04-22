@@ -1,13 +1,125 @@
 <template>
-    <h3>profile</h3>
+    <div>
+        <scroll class="content">
+        <ul>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+            <li>hell0</li>
+        </ul>
+    </scroll>
+    </div>
 </template>
 
 <script>
+import Scroll from 'components/common/scroll/Scroll'
 export default {
-
+  name: 'Profile',
+  components: {
+    Scroll
+  }
 }
 </script>
 
-<style>
-
+<style scoped>
+.content {
+    height: 300px;
+    overflow: hidden;
+}
 </style>
