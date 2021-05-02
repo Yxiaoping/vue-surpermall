@@ -4,3 +4,4 @@ import SwiperItem from './SwiperItem'
 export {
     Swiper,SwiperItem
 }
+// 以后导入就可使用 import {Swiper,SwiperItem} from ...

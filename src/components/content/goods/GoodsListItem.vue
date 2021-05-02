@@ -1,6 +1,6 @@
 <template>
-    <div class="goods-item">
-        <img :src="goodsItem.show.img" alt="" @load="imageLoad">
+    <div class="goods-item" @click="itemClick">
+        <img v-lazy="showImage" alt="" @load="imageLoad">
         <div class="goods-info">
             <p>{{goodsItem.title}}</p>
             <span class="price">{{goodsItem.price}}</span>
@@ -20,9 +20,23 @@ export default {
       }
     }
   },
+  computed: {
+    showImage () {
+      return this.goodsItem.image || this.goodsItem.show.img
+    }
+  },
   methods: {
     imageLoad () {
       this.$bus.$emit("itemImageLoad")
+      // 1. 利用路由的路径判断发送哪个事件
+      // if(this.$route.indexOf('/home')){
+      //   this.$bus.$emit('homeImageLoad')
+      // }else if(this.$route.indexOf('/detail')){
+      //   this.$bus.$emit('detailImageLoad')
+      // }
+    },
+    itemClick () {
+      this.$router.push('/detail/'+this.goodsItem.iid)
     }
   }
 }

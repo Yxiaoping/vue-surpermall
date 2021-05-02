@@ -42,7 +42,8 @@ import {
   getHomeMultidata,
   getHomeGoods
 } from 'network/home.js'
-import {debounce} from 'common/utils.js'
+// import {debounce} from 'common/utils.js' 混入后就不需要再重复引入了
+import {itemListenerMixin} from 'common/mixin.js'
 export default {
   name: 'Home',
   components: {
@@ -55,6 +56,8 @@ export default {
     Scroll,
     BackTop
   },
+  // 混入
+  mixins: [itemListenerMixin],
   data () {
     return {
         // result: null
@@ -70,6 +73,7 @@ export default {
         tabOffsetTop: 0,
         isTabFixed: false,
         saveY: 0
+        // itemImgListener: null 通过混入mixins导入
     }
   },
   computed: { // 页面展示处的代码太复杂，可放在计算属性中封装，使上面的代码简化
@@ -89,6 +93,8 @@ export default {
     // 保存离开时的位置信息到this.saveY
     this.saveY = this.$refs.scroll.getScrollY()
     // console.log(this.saveY);
+    // 2.取消全局事件监听（主页图片加载的监听）因为此时设置了keep-alive，所以离开时调用的是deactivated()
+    this.$bus.$off('itemImageLoad',this.itemImgListener)
   },
   created () {
     // 将created钩子中的代码简化，处理主要逻辑，具体的方法实现交给methods
@@ -100,12 +106,16 @@ export default {
     this.getHomeGoods('sell')
   },
   mounted () {
+    // 利用混入，减少重复代码
     // 1.监听item中图片加载完成，刷新防抖函数放到了utils.js中，工具库
-    const refresh = debounce(this.$refs.scroll.refresh,50)
-    this.$bus.$on('itemImageLoad',() => {
+    // const refresh = debounce(this.$refs.scroll.refresh,50)
+      // 对监听的事件进行保存，方便离开home组件时取消此事件监听
+      // this.itemImgListener = () => { refresh() }
+    // this.$bus.$on('itemImageLoad',() => {
       // this.$refs.scroll.refresh()
-      refresh() // 此处是闭包，局部变量不会被销毁
-    })
+      // refresh() // 此处是闭包，局部变量不会被销毁
+    // })
+      // this.$bus.$on('itemImageLoad', this.itemImgListener)
   },
   methods: {
     // 事件监听相关方法
