@@ -25,3 +25,8 @@ new Vue({
   store
 }).$mount('#app')
 // $mount 将vue实例挂载到app上
+
+// import { createApp } from 'vue'
+// createApp(App).use(router).use(store).use(VueLazyLoad, {
+//   loading: require('./assets/img/common/placeholder.png')
+// }).mount('#app')

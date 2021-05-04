@@ -1,149 +1,163 @@
 <template>
-    <div class="wrapper" ref='scroll'>
-        <ul class="content">
-            <button @click="btn">hello</button>
-        <li>hello1</li>
-        <li>hello2</li>
-        <li>hello3</li>
-        <li>hello4</li>
-        <li>hello5</li>
-        <li>hello6</li>
-        <li>hello7</li>
-        <li>hello8</li>
-        <li>hello9</li>
-        <li>hello10</li>
-        <li>hello11</li>
-        <li>hello12</li>
-        <li>hello13</li>
-        <li>hello14</li>
-        <li>hello15</li>
-        <li>hello16</li>
-        <li>hello17</li>
-        <li>hello18</li>
-        <li>hello19</li>
-        <li>hello20</li>
-        <li>hello21</li>
-        <li>hello22</li>
-        <li>hello23</li>
-        <li>hello24</li>
-        <li>hello25</li>
-        <li>hello26</li>
-        <li>hello27</li>
-        <li>hello28</li>
-        <li>hello29</li>
-        <li>hello30</li>
-        <li>hello31</li>
-        <li>hello32</li>
-        <li>hello33</li>
-        <li>hello34</li>
-        <li>hello35</li>
-        <li>hello36</li>
-        <li>hello37</li>
-        <li>hello38</li>
-        <li>hello39</li>
-        <li>hello40</li>
-        <li>hello41</li>
-        <li>hello42</li>
-        <li>hello43</li>
-        <li>hello44</li>
-        <li>hello45</li>
-        <li>hello46</li>
-        <li>hello47</li>
-        <li>hello48</li>
-        <li>hello49</li>
-        <li>hello50</li>
-        <li>hello51</li>
-        <li>hello52</li>
-        <li>hello53</li>
-        <li>hello54</li>
-        <li>hello55</li>
-        <li>hello56</li>
-        <li>hello57</li>
-        <li>hello58</li>
-        <li>hello59</li>
-        <li>hello60</li>
-        <li>hello61</li>
-        <li>hello62</li>
-        <li>hello63</li>
-        <li>hello64</li>
-        <li>hello65</li>
-        <li>hello66</li>
-        <li>hello67</li>
-        <li>hello68</li>
-        <li>hello69</li>
-        <li>hello70</li>
-        <li>hello71</li>
-        <li>hello72</li>
-        <li>hello73</li>
-        <li>hello74</li>
-        <li>hello75</li>
-        <li>hello76</li>
-        <li>hello77</li>
-        <li>hello78</li>
-        <li>hello79</li>
-        <li>hello80</li>
-        <li>hello81</li>
-        <li>hello82</li>
-        <li>hello83</li>
-        <li>hello84</li>
-        <li>hello85</li>
-        <li>hello86</li>
-        <li>hello87</li>
-        <li>hello88</li>
-        <li>hello89</li>
-        <li>hello90</li>
-        <li>hello91</li>
-        <li>hello92</li>
-        <li>hello93</li>
-        <li>hello94</li>
-        <li>hello95</li>
-        <li>hello96</li>
-        <li>hello97</li>
-        <li>hello98</li>
-        <li>hello99</li>
-        <li>hello100</li>
-    </ul>
+    <div class="wrapper">
+        <nav-bar class="nav-bar">
+            <template #center>商品分类</template>
+        </nav-bar>
+        <div class="content">
+          <category-menu :categories='categories' @selectItem='selectItem'/>
+          <scroll class="tab-content" 
+          :data='[categoryData]' 
+          ref="scroll"
+          :probe-type='3'
+          @scroll="scroll">
+          <div>
+            <menu-detail :subcategories='showSubcategory'/>
+            <tab-control :titles="['综合','新品','销量']" 
+            @tabClick='tabClick'/>
+            <content-detail :content-detail='showContentDetail'/>
+          </div>
+        </scroll>
+        </div>
+        <back-top v-show="showTop" @click.native="backTop"></back-top>
     </div>
 </template>
 
 <script>
-import BScroll from 'better-scroll'
+import NavBar from 'components/common/navbar/NavBar'
+import CategoryMenu from './childCopms/CategoryMenu'
+import MenuDetail from './childCopms/MenuDetail'
+import ContentDetail from './childCopms/ContentDetail'
+import Scroll from 'components/common/scroll/Scroll'
+import TabControl from 'components/content/tabControl/TabControl'
+
+import {getCategory,getsubcategory,getContentDetail} from 'network/category.js'
+import {backTopMixin} from 'common/mixin.js'
 export default {
   name: 'Category',
+  components: {
+    NavBar,
+    CategoryMenu,
+    MenuDetail,
+    ContentDetail,
+    Scroll,
+    TabControl
+  },
   data(){
       return {
-        scroll: null
+        categories: [],
+        categoryData: [],
+        currentIndex: -1,
+        currentType: 'pop'
       }
   },
-  mounted () {
-    this.scroll = new BScroll(this.$refs.scroll,{
-        probeType: 3,
-        pullUpLoad: true
-    })
-    this.scroll.on('scroll',position=>{
-        console.log(position)
-    })
-    this.scroll.on('pullingUp',()=>{
-        console.log('hello')
-        setTimeout(()=>{
-            this.scroll.finishPullUp()
-        },2000)
-    })
+  mixins: [backTopMixin],
+  created () {
+    this._getCategory()
+    // this._getubcategory(0)
+  },
+  computed: {
+    showSubcategory () {
+      if(this.currentIndex === -1) return {}
+      return this.categoryData[this.currentIndex].subcategories
+    },
+    showContentDetail () {
+      if(this.currentIndex === -1) return []
+      return this.categoryData[this.currentIndex].categoryDetail[
+        this.currentType
+      ]
+    }
   },
   methods: {
-      btn () {
-          console.log('btn');
+    _getCategory(){
+      getCategory().then(res => {
+      console.log(res);
+      // 1.获取分类数据
+      this.categories = res.data.category.list
+      // 2.初始化每个类别的子数据
+      for(let i=0; i<this.categories.length; i++) {
+        this.categoryData[i] = {
+          subcategories: {},
+          categoryDetail: {
+            'pop': [],
+            'new': [],
+            'sell': []
+          }
+        }
       }
+    //   主数据请求到之后才能接着请求后面的子数据
+      this._getsubcategory(0)
+    })
+    },
+    _getsubcategory(index){
+        this.currentIndex = index
+        const mailKey = this.categories[index].maitKey
+        getsubcategory(mailKey).then(res => {
+          console.log(res);
+          this.categoryData[index].subcategories = res.data
+          this.categoryData = {...this.categoryData}
+          this._getContentDetail('pop')
+          this._getContentDetail('new')
+          this._getContentDetail('sell')
+          console.log(this.categoryData);
+    })
+    },
+    _getContentDetail(type) {
+      const miniWallkey = this.categories[this.currentIndex].miniWallkey;
+      console.log(miniWallkey);
+      getContentDetail(miniWallkey, type).then(res => {
+          this.categoryData[this.currentIndex].categoryDetail[type] = res
+          this.categoryData = {...this.categoryData}
+        })
+    },
+    tabClick (index) {
+      switch (index) {
+        case 0:
+          this.currentType = 'pop'
+          break
+        case 1:
+          this.currentType = 'new'
+          break
+        case 2:
+          this.currentType = 'sell'
+          break
+      }
+      console.log(this.currentType);
+    },
+    selectItem (index) {
+      this._getsubcategory(index)
+    },
+    scroll (position) {
+      const positionY = -position.y
+      // console.log(positionY);
+      this.showTop = positionY > 1000
+    }
   }
 }
 </script>
 
-<style>
-/* 原生的实现局部滚动的方式 */
+<style scoped>
 .wrapper {
-    height: 150px;
-    background: chartreuse;
-    overflow: hidden;
-    /* overflow: scroll; */
+    /* background: chartreuse; */
+    height: 100vh;
+}
+.nav-bar {
+    background: var(--color-tint);
+    color: #fff;
+    font-weight: 700;
+}
+.content {
+  overflow: hidden;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 44px;
+  bottom: 49px;
+  display: flex;
+}
+.tab-content {
+  height: 100%;
+  flex: 1;
+  position: absolute;
+  left: 100px;
 }
 </style>

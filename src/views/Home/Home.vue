@@ -12,7 +12,8 @@
           ref="scroll" :probe-type='3' 
           @scroll='contentScroll'
           :pull-up-load='true'
-          @pullingUp='loadMore'>
+          @pullingUp='loadMore'
+          :observeImage='true'>
         <home-swiper :banners='banners' @imageLoad='swiperImageLoad'></home-swiper>
         <home-recommend-view :recommends='recommends'></home-recommend-view>
         <feature-view></feature-view>

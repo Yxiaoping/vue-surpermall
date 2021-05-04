@@ -53,6 +53,7 @@ export default {
     color: var(--color-high-text);
 }
 .active span {
-    border-bottom: 2px solid var(--color-tint);
+    border-bottom: 3px solid var(--color-tint);
+    font-weight: 600;
 }
 </style>

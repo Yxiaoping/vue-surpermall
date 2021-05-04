@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+// import { createRouter, createWebHistory } from 'vue-router'
+
 const Home = () => import('views//Home/Home')
 const Category = () => import('views/Category/Category')
 const Cart = () => import('views/Cart/Cart')
@@ -37,4 +39,8 @@ const router = new VueRouter({
   routes,
   mode: 'history'
 })
+// const router = createRouter({
+//   history: createWebHistory(),
+//   routes
+// })
 export default router

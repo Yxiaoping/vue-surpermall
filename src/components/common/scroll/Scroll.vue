@@ -18,6 +18,20 @@ export default {
     pullUpLoad: {
       type: Boolean,
       default: false
+    },
+    observeDOM: {
+      type: Boolean,
+      default: false,
+    },
+    observeImage: {
+      type: Boolean,
+      default:false
+    },
+    data: {
+      type: Array,
+      default () {
+        return []
+      }
     }
   },
   data () {
@@ -31,7 +45,10 @@ export default {
         this.scroll = new BScroll(this.$refs.wrapper,{
           click: true, /* div等元素想要被点击，必须设置click */
           probeType: this.probeType,
-          pullUpLoad: this.pullUpLoad
+          pullUpLoad: this.pullUpLoad,
+          observeDOM: this.observeDOM,
+          // 等页面图片加载完之后，刷新content高度
+          observeImage: this.observeImage
         })
         // 2.监听滚动的位置
         if(this.probeType===2 || this.probeType===3){
@@ -48,6 +65,11 @@ export default {
       })
       }
       // },1000)
+  },
+  watch: {
+    data () {
+      setTimeout(this.refresh,30)
+    }
   },
   methods: {
     scrollTo(x,y,time=1000){

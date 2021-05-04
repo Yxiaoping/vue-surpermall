@@ -10,7 +10,8 @@
         <scroll class="content"
         ref='scroll'
         @scroll='contentScroll'
-        :probe-type='3'>
+        :probe-type='3'
+        :observeImage='true'>
         <!-- 虽然属性名是用的驼峰，但传属性时，用的-分隔，
         因为html标签中不区分大小写，用驼峰topImg命名就相当于topimg，就会找不到
         事件不用，能区分 -->
