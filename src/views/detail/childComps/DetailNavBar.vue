@@ -51,5 +51,9 @@ export default {
 }
 .left img {
     margin-top: 10px;
+    /* 为svg图片改变颜色 */
+    position: relative;
+    left: -80px;
+    filter: drop-shadow(red 80px 0);  
 }
 </style>
